@@ -37,23 +37,29 @@ def pertenece(char, lista):
     return (char in lista)
     
 def error(estado, char):
-    print("Error:" + "\n" + "caracter leido = " + char + "\n" + "estado = " + str(estado))
+    print "############################"
+    print("Error:" + "\n" + "caracter leido = " + str(ord(char)) + "\n" + "estado = " + str(estado))
+    print "############################"
 
 def create_token(arg):
+    print arg
     return
     
 def create_token_ident():
+    global string
+    print string
     return
     
 def create_token_decimal():
     global cont
+    print cont
     return
     
 def create_token_octal():
     global cont
     global string
     cont = int("0" + string,8)
-    create_token_decimal(cont)
+    create_token_decimal()
     string = ""
     return
     
@@ -61,7 +67,7 @@ def create_token_hexadecimal():
     global cont
     global string
     cont = int("0x" + string,16)
-    create_token_decimal(cont)
+    create_token_decimal()
     string = ""
     return
 
@@ -161,6 +167,10 @@ def analizador_lexico(char):
             
         elif (char == "."):
             create_token(".")
+            return
+            
+        elif (char == ","):
+            create_token(",")
             return
             
         elif (char == ":"):
@@ -449,7 +459,7 @@ def analizador_lexico(char):
         return
 
 
-with open("/home/filstrup/hub/pdl/Ejem.js") as f: #abrimos el archivo
+with open("/Users/filstrup/Dropbox/hand.js") as f: #abrimos el archivo
         c = f.read().splitlines(1)
         texto = ""
         for i in c:
@@ -468,4 +478,3 @@ with open("/home/filstrup/hub/pdl/Ejem.js") as f: #abrimos el archivo
         #salimos del bucle, y es posible que se quede el ultimo token sin crear
         #(seria raro,ya que normakmente lo ultimo que se leera sera "}" o "\t" o algo por el estilo)
         #asi forzamos la creacion del ultimo token
-        
