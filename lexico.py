@@ -16,6 +16,7 @@ ALL = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q',
 string = ""
 estado = 0
 cont = 0
+lista_tokens  = []
 
 def concat(char):
     global string
@@ -42,16 +43,85 @@ def error(estado, char):
     print "############################"
 
 def create_token(arg):
+    
+    global lista_tokens
+
+    if(arg == ";"):
+        lista_tokens.append(["simbolo", ";"])
+    elif(arg =="?"):
+        lista_tokens.append(["simbolo", "?"])
+    elif(arg =="."):
+        lista_tokens.append(["simbolo", "."])
+    elif(arg ==","):
+        lista_tokens.append(["simbolo", ","])
+    elif(arg ==":"):
+        lista_tokens.append(["simbolo", ":"])
+    elif(arg =="("):
+        lista_tokens.append(["simbolo", "("])
+    elif(arg ==")"):
+        lista_tokens.append(["simbolo", ")"])
+    elif(arg =="["):
+        lista_tokens.append(["simbolo", "["])
+    elif(arg =="]"):
+        lista_tokens.append(["simbolo", "]"])
+    elif(arg =="{"):
+        lista_tokens.append(["simbolo", "{"])
+    elif(arg =="}"):
+        lista_tokens.append(["simbolo", "}"])
+    elif(arg =="++"):
+        lista_tokens.append(["simbolo", "++"])
+    elif(arg =="+="):
+        lista_tokens.append(["simboloAsignOp", "+="])
+    elif(arg =="+"):
+        lista_tokens.append(["simboloIntInt", "+"])
+    elif(arg =="--"):
+        lista_tokens.append(["simbolo", "--"])
+    elif(arg =="-="):
+        lista_tokens.append(["simboloAsignOp", "-="])
+    elif(arg =="-"):
+        lista_tokens.append(["simboloIntInt", "-"])
+    elif(arg =="&&"):
+        lista_tokens.append(["simboloBoolBool", "&&"])
+    elif(arg =="||"):
+        lista_tokens.append(["simboloBoolBool", "||"])
+    elif(arg =="="):
+        lista_tokens.append(["simbolo", "="])
+    elif(arg =="=="):
+        lista_tokens.append(["simboloIntBool", "=="])
+    elif(arg =="<="):
+        lista_tokens.append(["simboloIntBool", "<="])
+    elif(arg =="<"):
+        lista_tokens.append(["simboloIntBool", "<"])
+    elif(arg ==">="):
+        lista_tokens.append(["simboloIntBool", ">="])
+    elif(arg ==">"):
+        lista_tokens.append(["simboloIntBool", ">"])
+    elif(arg =="!="):
+        lista_tokens.append(["simboloIntBool", "!="])
+    elif(arg =="!"):
+        lista_tokens.append(["simboloBoolBool", "!"])
+    elif(arg =="%="):
+        lista_tokens.append(["simboloAsignOp", "%="])
+    elif(arg =="%"):
+        lista_tokens.append(["simboloIntInt", "%"])
+    elif(arg =="*="):
+        lista_tokens.append(["simboloAsignOp", "*="])
+    elif(arg =="*"):
+        lista_tokens.append(["simboloIntInt", "*"])
     print arg
     return
     
 def create_token_ident():
     global string
+    global lista_tokens
+    lista_tokens.append(["ident", string])
     print string
     return
     
 def create_token_decimal():
     global cont
+    global lista_tokens
+    lista_tokens.append(["int", cont])
     print cont
     return
     
@@ -459,22 +529,43 @@ def analizador_lexico(char):
         return
 
 
-with open("/Users/filstrup/Dropbox/hand.js") as f: #abrimos el archivo
+with open("/home/filstrup/hub/pdl/Ejem.js") as f: #abrimos el archivo
+        global lista_tokens
         c = f.read().splitlines(1)
         texto = ""
         for i in c:
             texto+=i
-        print texto
-        
-        with open("output.txt", "w") as text_file:
-            for i in c:
-                text_file.write(i)
+        ##print texto
                 
         for i in c:
             for letra in i:
                 analizador_lexico(letra)
         analizador_lexico(" ")
+        
         #la idea es mandar un delimitador como ultimo caracter, ya que al alcanar el EOF
         #salimos del bucle, y es posible que se quede el ultimo token sin crear
         #(seria raro,ya que normakmente lo ultimo que se leera sera "}" o "\t" o algo por el estilo)
         #asi forzamos la creacion del ultimo token
+        
+        print(lista_tokens)
+        with open("output.txt", "w") as text_file:
+            for i in lista_tokens:
+                tp = 0
+                p = 0
+                text_file.write("( ")
+                for j in i:
+                    if(tp ==1):
+                        text_file.write(str(j))
+                    else:
+                        text_file.write(j)
+                    if(j == "int"):
+                        tp = 1
+                    else:
+                        tp = 0
+                    if(p == 0):
+                        text_file.write(", ")
+                        p = 1
+                    else:
+                        text_file.write(" )")
+                        p = 0
+                text_file.write("\n")
