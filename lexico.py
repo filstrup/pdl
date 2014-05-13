@@ -33,7 +33,7 @@ def concatN(digit):
     if (digit == "reset"):
         cont = 0
     else:
-        cont = cont*10 + cont  
+        cont = cont*10 + int(digit) 
     return 
     
 def pertenece(char, lista):
@@ -111,7 +111,7 @@ def create_token(arg):
     elif(arg =="*"):
         lista_tokens.append(["simboloIntInt", "*"])
     elif(arg == "string"):
-        lista_tokens.append(["string", string])
+        lista_tokens.append(["string", '"' + string + '"'])
     elif(arg == "/="):
         lista_tokens.append(["simboloAsignOp", "/="])
     print arg
@@ -149,6 +149,7 @@ def create_token_hexadecimal():
 
 def analizador_lexico(char):
     
+    global cont
     global estado
     
     if (estado == 0):
@@ -370,6 +371,11 @@ def analizador_lexico(char):
             estado = 9
             concat(char)
             return
+        create_token_decimal()
+        estado = 0
+        concatN("reset")
+        analizador_lexico(char)
+        return
             
     elif (estado == 8):
         
