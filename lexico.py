@@ -13,6 +13,8 @@ ALL = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q',
        '0','1','2','3','4','5','6','7','8','9',
        '+','-','*','/','%','&','|','!','<','>','=','(',')','[',']','{','}',';',',',':','.',"_",'?','\n','\t','\0','\b','\r']
 
+entrada = 0
+
 string = ""
 estado = 0
 cont = 0
@@ -43,7 +45,7 @@ def error(estado, char):
     print "############################"
 
 def create_token(arg):
-    
+    global string
     global lista_tokens
 
     if(arg == ";"):
@@ -108,6 +110,10 @@ def create_token(arg):
         lista_tokens.append(["simboloAsignOp", "*="])
     elif(arg =="*"):
         lista_tokens.append(["simboloIntInt", "*"])
+    elif(arg == "string"):
+        lista_tokens.append(["string", string])
+    elif(arg == "/="):
+        lista_tokens.append(["simboloAsignOp", "/="])
     print arg
     return
     
@@ -185,7 +191,7 @@ def analizador_lexico(char):
             estado = 14
             return
             
-        elif (char == "\""):
+        elif (char == '"'):
             estado = 15
             return
             
@@ -214,6 +220,10 @@ def analizador_lexico(char):
             return
             
         ##################################
+        elif (char == "\\"):
+            estado = 22
+            return
+            
         elif (char == "\n"):
             return
             
@@ -285,6 +295,8 @@ def analizador_lexico(char):
         elif (char == "/"):
             estado = 4
             return
+        elif (char == "="):
+            create_token("/=")
         error(estado, char)
         return
             
@@ -437,13 +449,13 @@ def analizador_lexico(char):
             
     elif (estado == 14):
         
-        if (char != "\n" or char != "\r"):
-            concat(char)
-            return
-        elif (char == "'"):
+        if (char == "'"):
             estado = 0
             create_token("string")
             concat("reset")
+            return
+        else:
+            concat(char)
             return
         error(estado, char)
         return
@@ -451,14 +463,15 @@ def analizador_lexico(char):
             
     elif (estado == 15):
         
-        if (char != "\n" or char != "\r"):
-            concat(char)
-            return
-        elif (char == "\""):
+        if (char == '"'):
             estado = 0
             create_token("string")
             concat("reset")
             return
+        else:
+            concat(char)
+            return
+        
         error(estado, char)
         return
             
@@ -527,11 +540,18 @@ def analizador_lexico(char):
         create_token("*")
         analizador_lexico(char)
         return
+    
+    elif (estado == 22):
+        
+        if (char == "n"):
+            estado = 0
+            return
+        error(estado, char)
 
 
 with open("/home/filstrup/hub/pdl/Ejem.js") as f: #abrimos el archivo
-        global lista_tokens
-        c = f.read().splitlines(1)
+        c = f.readlines()
+        print c
         texto = ""
         for i in c:
             texto+=i
@@ -552,7 +572,7 @@ with open("/home/filstrup/hub/pdl/Ejem.js") as f: #abrimos el archivo
             for i in lista_tokens:
                 tp = 0
                 p = 0
-                text_file.write("( ")
+                text_file.write("<")
                 for j in i:
                     if(tp ==1):
                         text_file.write(str(j))
@@ -566,6 +586,6 @@ with open("/home/filstrup/hub/pdl/Ejem.js") as f: #abrimos el archivo
                         text_file.write(", ")
                         p = 1
                     else:
-                        text_file.write(" )")
+                        text_file.write(">")
                         p = 0
                 text_file.write("\n")
