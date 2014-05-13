@@ -13,6 +13,9 @@ ALL = ['A','B','C','D','E','F','G','H','I','J','K','L','M','N','Ñ','O','P','Q',
        '0','1','2','3','4','5','6','7','8','9',
        '+','-','*','/','%','&','|','!','<','>','=','(',')','[',']','{','}',';',',',':','.',"_",'?','\n','\t','\0','\b','\r']
 
+reservadas = ["for", "if", "switch", "case", "function", "return", "break", "default", "this", "var", "new", "else", "false",
+              "true", "while", "do"]
+
 entrada = 0
 
 string = ""
@@ -120,7 +123,11 @@ def create_token(arg):
 def create_token_ident():
     global string
     global lista_tokens
-    lista_tokens.append(["ident", string])
+    global reservadas
+    if(pertenece(string, reservadas)):
+        lista_tokens.append([string, ""])
+    else:
+        lista_tokens.append(["ident", string])
     print string
     return
     
